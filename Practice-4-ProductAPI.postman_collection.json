@@ -1,0 +1,499 @@
+{
+	"info": {
+		"_postman_id": "ab850ac1-3f1e-4c40-8aee-bb64049d43fd",
+		"name": "Practice-4-ProductAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38069921"
+	},
+	"item": [
+		{
+			"name": "Get Single Product",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('id',2)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Successful response.\r",
+							"pm.test('Status code is 200', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//JSON schema validation.\r",
+							"const schema=\r",
+							"{\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"id\": {\r",
+							"      \"type\": \"integer\"\r",
+							"    },\r",
+							"    \"title\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"price\": {\r",
+							"      \"type\": \"number\"\r",
+							"    },\r",
+							"    \"description\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"category\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"image\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"rating\": {\r",
+							"      \"type\": \"object\",\r",
+							"      \"properties\": {\r",
+							"        \"rate\": {\r",
+							"          \"type\": \"number\"\r",
+							"        },\r",
+							"        \"count\": {\r",
+							"          \"type\": \"integer\"\r",
+							"        }\r",
+							"      },\r",
+							"      \"required\": [\r",
+							"        \"rate\",\r",
+							"        \"count\"\r",
+							"      ]\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"id\",\r",
+							"    \"title\",\r",
+							"    \"price\",\r",
+							"    \"description\",\r",
+							"    \"category\",\r",
+							"    \"image\",\r",
+							"    \"rating\"\r",
+							"  ]\r",
+							"}\r",
+							"\r",
+							"pm.test('Response is a valid JSON schema', function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"})\r",
+							"\r",
+							"//Response is a non-empty object.\r",
+							"pm.test('Response is a non-empty object', function () {\r",
+							"    pm.expect(pm.response.json()).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"//Response contains the expected product ID.\r",
+							" pm.test('Response conatins the provided product id', function () {\r",
+							"    pm.expect(pm.response.json().id).eql(pm.collectionVariables.get('id'));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products/{{id}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Validate the length of the array is as expected.\r",
+							"pm.test('Array length is 20', function () {\r",
+							"    pm.expect(pm.response.json().length).to.eql(20);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products",
+					"host": [
+						"{{base_url}}products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Limited Products",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('limit',5)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Validate the number of returned products matches the limit value.\r",
+							"const responseJson = pm.response.json();\r",
+							"const limit=pm.collectionVariables.get('limit')\r",
+							"pm.test('Number of products matches the limit', function () {\r",
+							"    pm.expect(responseJson.length).to.equal(parseInt(limit));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products?limit={{limit}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "{{limit}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Sorted Products",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('sort','asc')"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Validate the sorting order matches the specified asc or desc.\r",
+							"\r",
+							"  "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products?sort={{sort}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "{{sort}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products with Limit and Sort",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products?limit={{limit}}&sort={{sort}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "{{limit}}"
+						},
+						{
+							"key": "sort",
+							"value": "{{sort}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products/categories",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products by Category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('category','jewelery')"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products/category/{{category}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"category",
+						"{{category}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add a Product",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//pm.collectionVariables.set('title','Testing the title')\r",
+							"//pm.collectionVariables.set('price','200')\r",
+							"//pm.collectionVariables.set('description', 'This is a test description')\r",
+							"//pm.collectionVariables.set('image', 'https://example.com/test.jpg')\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var id = pm.response.json().id; // Extract the id from the response body\r",
+							"\r",
+							"pm.collectionVariables.set('id',id)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"price\": {{price}},\r\n    \"description\": \"{{description}}\",\r\n    \"image\": \"{{image}}\",\r\n    \"category\": \"{{category}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}products",
+					"host": [
+						"{{base_url}}products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Product",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set('title','Testing the title222')\r",
+							"pm.collectionVariables.set('price','20022')\r",
+							"pm.collectionVariables.set('description', 'This is a test description2222')\r",
+							"pm.collectionVariables.set('image', 'https://example.com/test222.jpg')\r",
+							"pm.collectionVariables.set('category', 'electronics')"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"price\": {{price}},\r\n    \"description\": \"{{description}}\",\r\n    \"image\": \"{{image}}\",\r\n    \"category\": \"{{category}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}products/{{id}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial Update a Product",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//pm.collectionVariables.set('title','Testing the title333')\r",
+							"//pm.collectionVariables.set(\"category\", \"men's clothing\")"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"category\": \"{{category}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}products/{{id}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}products/{{id}}",
+					"host": [
+						"{{base_url}}products"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "limit",
+			"value": ""
+		},
+		{
+			"key": "sort",
+			"value": ""
+		},
+		{
+			"key": "category",
+			"value": ""
+		},
+		{
+			"key": "title",
+			"value": ""
+		},
+		{
+			"key": "price",
+			"value": ""
+		},
+		{
+			"key": "description",
+			"value": ""
+		},
+		{
+			"key": "image",
+			"value": ""
+		},
+		{
+			"key": "21",
+			"value": ""
+		}
+	]
+}
